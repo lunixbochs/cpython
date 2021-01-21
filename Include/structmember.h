@@ -62,6 +62,10 @@ typedef struct PyMemberDef {
 #define PY_WRITE_RESTRICTED 4
 #define RESTRICTED          (READ_RESTRICTED | PY_WRITE_RESTRICTED)
 
+#define AUDIT_READ          2
+#define AUDIT_WRITE         4
+#define AUDIT_DELETE        8
+#define AUDIT_ACCESS        (AUDIT_READ | AUDIT_WRITE | AUDIT_DELETE)
 
 /* Current API, use this */
 PyAPI_FUNC(PyObject *) PyMember_GetOne(const char *, struct PyMemberDef *);

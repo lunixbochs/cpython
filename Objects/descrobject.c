@@ -164,7 +164,7 @@ member_get(PyMemberDescrObject *descr, PyObject *obj, PyObject *type)
     if (descr_check((PyDescrObject *)descr, obj, &res))
         return res;
 
-    if (descr->d_member->flags & READ_RESTRICTED) {
+    if (descr->d_member->flags & AUDIT_READ) {
         if (PySys_Audit("object.__getattr__", "Os",
             obj ? obj : Py_None, descr->d_member->name) < 0) {
             return NULL;
@@ -222,6 +222,14 @@ static int
 member_set(PyMemberDescrObject *descr, PyObject *obj, PyObject *value)
 {
     int res;
+
+    if (descr->d_member->flags & AUDIT_WRITE) {
+        res = PySys_Audit("object.__setattr__", "Os",
+                          obj ? obj : Py_None, descr->d_member->name);
+        if (res < 0) {
+            return res;
+        }
+    }
 
     if (descr_setcheck((PyDescrObject *)descr, obj, value, &res))
         return res;
