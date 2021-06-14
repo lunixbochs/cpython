@@ -77,9 +77,6 @@ EnterNonRecursiveMutex(PNRMUTEX mutex, DWORD milliseconds)
     } else if (milliseconds != 0) {
         /* wait at least until the target */
         _PyTime_t now = _PyTime_GetPerfCounter();
-        if (now <= 0) {
-            Py_FatalError("_PyTime_GetPerfCounter() == 0");
-        }
         _PyTime_t nanoseconds = _PyTime_FromNanoseconds((_PyTime_t)milliseconds * 1000000);
         _PyTime_t target = now + nanoseconds;
         while (mutex->locked) {
@@ -160,6 +157,10 @@ unsigned long PyThread_get_thread_native_id(void);
 static void
 PyThread__init_thread(void)
 {
+    _PyTime_t now = _PyTime_GetPerfCounter();
+    if (now <= 0) {
+        Py_FatalError("_PyTime_GetPerfCounter() <= 0");
+    }
 }
 
 /*
